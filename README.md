@@ -14,8 +14,6 @@ A number of resources helped in creating this guidance. This repository aims at 
 
 Please note that different models have different model cards and prompting templates and you should visit the developer of every LLM to tweak the code to account for the relevant chat template.
 
-I'll fix the formatting and links in your table of contents. Here's the corrected version:
-
 ## Table of Contents
 * [Part I - Setting the Coding Environment](#part-i---setting-the-coding-environment)
 * [Part II - Create/Import data for Finetuning](#part-ii---createimport-data-for-finetuning)
@@ -90,6 +88,45 @@ You can clone the **llama.cpp** respository which can be through the following l
             git clone https://github.com/ggerganov/llama.cpp.git
 
 Then later on in this code, we would need to change the working directory to be inside the cloned llama.cpp on our machine to be able to use the convert_hf_to_gguf.py file for model conversion from safetensors to GGUF with the required quantization.
+
 ## Part II - Create/Import data for Finetuning
+### Step 2.1:
+This is going to be done outside of the terminal environment. For the purpose of this example, I have a **csv** file containing the questions and answers of **RICS APC** submissions in the form of questions and answers. The file is composed of 3 columns **ID**, **Question** & **Answer**. 
+    
+### Step 2.2:
+Every model has its chat template, for the current example, we are going to use the mistral  architecture. I used a chat template that was proposed by the MLX team on their github repository which works fine for the mistral architecture
+        
+        {"messages": [{"role": "system", "content": "You are a helpful assistant."}, {"role": "user", "content": "Hello."}, {"role": "assistant", "content": "How can I assistant you today."}]}
+
+In future fine-tuning I will use the official chat template of mistral which you can find below:
+
+         <s>[INST] Human message [/INST] Assistant response </s>[INST] Human message [/INST] Assistant response
+    
+### Step 2.3:
+For fine-tuning purposes using the MLX library, we have to convert the training data into 3 json files: **train.jsonl**, **test.jsonl** & **valid.jsonl**.
+    
+### Step 2.4:
+I built a python code which takes the **CSV** uploaded by the end user from any desired location and then it applies the **llama3** chat template on it and then saves the training, testing and validation files in **jsonl** format. 
+    
+The training data is 80% of the original data size, testing is at 10% and validation is at 10%. All the resultant files are saved in a folder called **data**.
+        
+In case of gated models, you will have to install huggingface hub in terminal using          
+            
+                Pip install huggingface_hub               
+            
+                OR              
+            
+                Pip3 install huggingface_hub 
+                
+This should be followed by logging into your account using your token by typing the following code in your terminal window
+    
+                Huggingface-cli login —token {Your_token} 
+
 ## Part III - Training the model, testing and validation
+
+
 ## Part IV - Saving the fused model with the trained adapters & compression to GGUF format
+
+## License
+
+## Contribution
