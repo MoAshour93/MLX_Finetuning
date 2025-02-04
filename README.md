@@ -103,14 +103,15 @@ In future fine-tuning I will use the official chat template of mistral which you
          <s>[INST] Human message [/INST] Assistant response </s>[INST] Human message [/INST] Assistant response
     
 ### Step 2.3:
-For fine-tuning purposes using the MLX library, we have to convert the training data into 3 json files: **train.jsonl**, **test.jsonl** & **valid.jsonl**.
+For fine-tuning purposes using the **MLX library**, we have to convert the training data into 3 json files: **train.jsonl**, **test.jsonl** & **valid.jsonl**.
     
-### Step 2.4:
-I built a python code which takes the **CSV** uploaded by the end user from any desired location and then it applies the **llama3** chat template on it and then saves the training, testing and validation files in **jsonl** format. 
+I built a python code which takes the **CSV** uploaded by the end user from any desired location and then it applies an example chat template on it (refer to **Step 2.2** above) and then saves the training, testing and validation files in **jsonl** format. 
     
 The training data is 80% of the original data size, testing is at 10% and validation is at 10%. All the resultant files are saved in a folder called **data**.
+
+The file that undertakes the above task is **csv_to_jsonl.py** and it is available within the repository.
         
-In case of gated models, you will have to install huggingface hub in terminal using          
+In case of gated models, you will have to install huggingface hub in terminal using:          
             
                 Pip install huggingface_hub               
             
@@ -123,7 +124,27 @@ This should be followed by logging into your account using your token by typing 
                 Huggingface-cli login —token {Your_token} 
 
 ## Part III - Training the model, testing and validation
+### Step 3.1: Defining Important Variables
+In this step, I am defining the different variables that I am go to use through my code.You can change them to suit your needs.
 
+The variables include the following:
+1. **Data directory** - The location where the train.jsonl, the test.jsonl and the valid.jsonl files are saved
+2. **Downloaded Huggingface Model directory** - In my case it is the Mistal Instruct v0.3 with 16 bits accuracy
+3. **Huggingface Repository** - In my case it is the Mistal Instruct v0.3 with 16 bits accuracy
+4. My desired **Huggingface Repository Name** for saving the fine-tuned model
+5. A **Write-Token** created from the Huggingface website to able to interact with the site to upload and download models.
+6. A directory for the place where I want to save the converted model from the huggingface format to MLX format
+7. The **Desired Name** for the fine-tuned MLX model
+8. The **Output Directory** for the fine-tuned MLX model
+9. **Llama.cpp Directory** where I cloned the github repository to be able to use it in terminal under this jupyter notebook.
+### Step 3.2: Download the desired model from the Huggingface website
+This step is quite substantial due to the importance of downloading a model from the Huggingface Website. In this project, I downloaded **Mistral Instruct v0.3 7B** with **16-bits** accuracy. The overall size of the model is circa **15GB**.
+
+In order to download your desired model, you can use the following code inside your terminal window:
+     
+     Huggingface-cli login --token {hf_token}
+
+     huggingface-cli download --repo-type model --local-dir {downloaded_hf_model} {hf_model}
 
 ## Part IV - Saving the fused model with the trained adapters & compression to GGUF format
 
