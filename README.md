@@ -1,5 +1,5 @@
 # Fine-tuning Large Language Models on Apple Silicon Macs using MLX & Llama.cpp
-This repository aims at providing a detailed guidance about how you can fine-tune large language models on Apple Silicon Macs using MLX and llamac.cpp.
+This repository aims at providing a detailed guidance about how you can fine-tune large language models on Apple Silicon Macs using the **MLX Framework** and **llama.cpp**.
 
 ## Acknowledgements
 A number of resources helped in creating this guidance. This repository aims at collating the most useful information from all the following resources:
@@ -13,6 +13,12 @@ A number of resources helped in creating this guidance. This repository aims at 
 * [Fine-tuning LLMs on Mac OS using MLX and run with Ollama](https://medium.com/rahasak/fine-tuning-llms-on-macos-using-mlx-and-run-with-ollama-182a20f1fd2c)
 
 Please note that different models have different model cards and prompting templates and you should visit the developer of every LLM to tweak the code to account for the relevant chat template.
+
+## Repository main files:
+The explanation of everything in this repository relies on the following 3 files:
+* **Readme.md** - This file explains the repository, the components and the way to undertake the fine-tuning of any desired large language model using  the MLX framework. This readme file also explains how to create the data required for fine-tuning.
+* **Convert_CSV_to_JSONL.py** - This python file enables the conversion of csv training dataset into 3 files **train**, **test** & **valid**.
+* **Mistral_Instruct_MLX_Fine-tuning.ipynb** - This is the main jupyter notebook which contains everything related to the fine-tuning of the desired model, testing, inferencing and conversion to GGUF.
 
 ## Table of Contents
 * [Part I - Setting the Coding Environment](#part-i---setting-the-coding-environment)
@@ -113,15 +119,15 @@ The file that undertakes the above task is **csv_to_jsonl.py** and it is availab
         
 In case of gated models, you will have to install huggingface hub in terminal using:          
             
-                Pip install huggingface_hub               
+                !Pip install huggingface_hub               
             
                 OR              
             
-                Pip3 install huggingface_hub 
+                !Pip3 install huggingface_hub 
                 
 This should be followed by logging into your account using your token by typing the following code in your terminal window
     
-                Huggingface-cli login —token {Your_token} 
+                !Huggingface-cli login —token {Your_token} 
 
 ## Part III - Training the model, testing and validation
 ### Step 3.1: Defining Important Variables
@@ -137,14 +143,97 @@ The variables include the following:
 7. The **Desired Name** for the fine-tuned MLX model
 8. The **Output Directory** for the fine-tuned MLX model
 9. **Llama.cpp Directory** where I cloned the github repository to be able to use it in terminal under this jupyter notebook.
+
 ### Step 3.2: Download the desired model from the Huggingface website
 This step is quite substantial due to the importance of downloading a model from the Huggingface Website. In this project, I downloaded **Mistral Instruct v0.3 7B** with **16-bits** accuracy. The overall size of the model is circa **15GB**.
 
 In order to download your desired model, you can use the following code inside your terminal window:
      
-     Huggingface-cli login --token {hf_token}
+     !Huggingface-cli login --token {hf_token}
 
-     huggingface-cli download --repo-type model --local-dir {downloaded_hf_model} {hf_model}
+     !huggingface-cli download --repo-type model --local-dir {downloaded_hf_model} {hf_model}
+
+### Step 3.3: Huggingface Model Conversion to MLX format
+This step is all about converting the downloaded Huggingface model into MLX format. For this we can use the **mlx_lm.convert** function within the MLX library. The conversion for of the model could be done using the following code.
+
+    !mlx_lm.convert \
+
+       --hf-path {hf_model} \
+
+       --mlx-path {mlx_path}
+
+### Step 3.4: Undertaking the fine-tuning of the chosen model using the Low Rank Adaptation under MLX_LM
+
+In this step, I am trying to make the best use of the Low Rank Adaptation with mlx_lm.lora under the mlx_lm package to fine-tune the already converted MLX Mistral V0.3. The summary of the fine-tuning code is as shown below. Please refer to the jupyter notebook which includes the full explanation of the arguments of the fine-tuning. 
+
+    ! mlx_lm.lora \
+     --model ${mlx_path} \
+     --train \
+     --data ${data} \
+     --fine-tune-type lora \
+     --num-layers 16 \
+     --batch-size 8 \
+     --iters 1000 \
+     --val-batches 50 \
+     --learning-rate 1e-5 \
+     --steps-per-report 10 \
+     --steps-per-eval 200 \
+     --adapter-path ${adapters} \
+     --save-every 500 \
+     --max-seq-length 2048 \
+     --grad-checkpoint \
+     --seed 42
+
+### Step 3.5: Testing the adapaters
+
+In this step, I am doing the mathematical tests provided by the MLX community which include the **Loss** and the **Perplexity** tests.
+
+The code for undertaking the testing of the model is as follows:
+
+    ! mlx_lm.lora \
+     --model ${mlx_path} \
+     --data ${data} \
+     --adapter-path ${adapters} \
+     --test  
+
+#### MLX Testing Metrics Analysis for Apple Silicon LLM Fine-tuning
+
+##### Test Loss (Current Score: 3.945)
+* **Definition**: Cross-entropy loss measured on the test set
+* **Typical Range**: 1.5 to 5.0
+* **Interpretation**:
+  * < 2.5: Excellent performance
+  * 2.5-3.5: Good performance
+  * 3.5-4.5: Moderate performance
+  * ">" 4.5: Poor performance
+* **Current Value Assessment**: 3.945 indicates moderate performance
+
+##### Test Perplexity (PPL) (Current Score: 51.684)
+* **Definition**: Exponential of the loss (e^loss)
+* **Purpose**: Measures model's uncertainty in predicting next tokens
+* **Typical Range**: 10 to 100
+* **Interpretation**:
+  * < 20: Excellent performance
+  * 20-40: Good performance
+  * 40-60: Moderate performance
+  * ">" 60: Poor performance
+* **Current Value Assessment**: 51.684 indicates moderate uncertainty in predictions
+
+#### Relationship Between Metrics
+* Loss and perplexity are exponentially related (PPL = e^loss)
+* Both metrics indicate prediction accuracy
+* Lower values indicate better performance
+
+#### Performance Assessment
+The current results suggest moderate performance with potential for improvement through:
+* Additional fine-tuning iterations
+* Hyperparameter optimization
+* Training data quality/quantity improvements
+* Model architecture adjustments
+
+#### Note
+These metrics provide quantitative measures of model performance and can guide optimization efforts during the fine-tuning process.
+
 
 ## Part IV - Saving the fused model with the trained adapters & compression to GGUF format
 
