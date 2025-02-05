@@ -1,7 +1,13 @@
-# Fine-tuning Large Language Models on Apple Silicon Macs using MLX & Llama.cpp
-This repository aims at providing a detailed guidance about how you can fine-tune large language models on Apple Silicon Macs using the **MLX Framework** and **llama.cpp**.
+# 🚀 Fine-tuning Large Language Models on Apple Silicon Macs using MLX & Llama.cpp
 
-## Acknowledgements
+This repository aims at providing detailed guidance about how you can fine-tune large language models on Apple Silicon Macs using the **MLX Framework** and **llama.cpp**.
+
+## 👨‍💻 Developer Contact
+- **Name:** Mohamed Ashour
+- **Email:** mo_ashour1@outlook.com
+- **LinkedIn:** [Mohamed Ashour](https://www.linkedin.com/in/mohamed-ashour-0727/)
+
+## 🙏 Acknowledgements
 A number of resources helped in creating this guidance. This repository aims at collating the most useful information from all the following resources:
 * [The MLX community](https://github.com/ml-explore/mlx-examples/blob/main/llms/mlx_lm/LORA.md)
 * Andy Peating articles:
@@ -9,23 +15,48 @@ A number of resources helped in creating this guidance. This repository aims at 
     * [Part 2 - Building your training data for fine-tuning](https://apeatling.com/articles/part-2-building-your-training-data-for-fine-tuning/)
     * [Part 3 - Fine-tuning your llm using the mlx framework](https://apeatling.com/articles/part-3-fine-tuning-your-llm-using-the-mlx-framework/)
     * [Part 4- Testing and interacting with your fine-tuned LLM](https://apeatling.com/articles/part-4-testing-and-interacting-with-your-fine-tuned-llm/)
-* [Llama 3 Model cards and prompting format available through](https://www.llama.com/docs/model-cards-and-prompt-formats/meta-llama-3/)
+* [Llama 3 Model cards and prompting format](https://www.llama.com/docs/model-cards-and-prompt-formats/meta-llama-3/)
 * [Fine-tuning LLMs on Mac OS using MLX and run with Ollama](https://medium.com/rahasak/fine-tuning-llms-on-macos-using-mlx-and-run-with-ollama-182a20f1fd2c)
 
-Please note that different models have different model cards and prompting templates and you should visit the developer of every LLM to tweak the code to account for the relevant chat template.
+## 📁 Repository Main Files
+* **Readme.md** - This file explains the repository, components and way to undertake fine-tuning
+* **Convert_CSV_to_JSONL.py** - Converts csv training dataset into train, test & valid files
+* **Mistral_Instruct_MLX_Fine-tuning.ipynb** - Main jupyter notebook for fine-tuning, testing, and conversion
+* **ModelFile** - Contains chat template and system prompt for Ollama usage
 
-## Repository main files:
-The explanation of everything in this repository relies on the following 4 files:
-* **Readme.md** - This file explains the repository, the components and the way to undertake the fine-tuning of any desired large language model using  the MLX framework. This readme file also explains how to create the data required for fine-tuning.
-* **Convert_CSV_to_JSONL.py** - This python file enables the conversion of csv training dataset into 3 files **train**, **test** & **valid**.
-* **Mistral_Instruct_MLX_Fine-tuning.ipynb** - This is the main jupyter notebook which contains everything related to the fine-tuning of the desired model, testing, inferencing and conversion to GGUF.
-* **ModelFile** - This file contains the chat template for the fine-tuned model in addition to the system prompt and some additional parameters. This file is important in the case of exporting the fine-tuned model to be used with **Ollama**.
-
-## Table of Contents
+## 📑 Table of Contents
 * [Part I - Setting the Coding Environment](#part-i---setting-the-coding-environment)
-* [Part II - Create/Import data for Finetuning](#part-ii---createimport-data-for-finetuning)
-* [Part III - Training the model, testing and validation](#part-iii---training-the-model-testing-and-validation)
-* [Part IV - Saving the fused model with the trained adapters & compression to GGUF format](#part-iv---saving-the-fused-model-with-the-trained-adapters--compression-to-gguf-format)
+    * [Step 1.1 - Opening Terminal](#step-11)
+    * [Step 1.2 - Installing Homebrew](#step-12)
+    * [Step 1.3 - Setting PATH](#step-13)
+    * [Step 1.4 - Installing Git](#step-14)
+    * [Step 1.5 - Cloning MLX Repository](#step-15)
+    * [Step 1.6 - Changing Directory](#step-16)
+    * [Step 1.7 - Installing Python](#step-17)
+    * [Step 1.8 - Installing Pip](#step-18)
+    * [Step 1.9 - Installing Requirements](#step-19)
+    * [Step 1.10 - Setting up Llama.cpp](#step-110)
+
+* [Part II - Create/Import Data for Finetuning](#part-ii---createimport-data-for-finetuning)
+    * [Step 2.1 - Preparing CSV Data](#step-21)
+    * [Step 2.2 - Understanding Chat Templates](#step-22)
+    * [Step 2.3 - Converting to JSONL Format](#step-23)
+
+* [Part III - Training the Model, Testing and Validation](#part-iii---training-the-model-testing-and-validation)
+    * [Step 3.1 - Defining Variables](#step-31)
+    * [Step 3.2 - Downloading Model](#step-32)
+    * [Step 3.3 - Converting to MLX Format](#step-33)
+    * [Step 3.4 - Fine-tuning Process](#step-34)
+    * [Step 3.5 - Testing Adapters](#step-35)
+    * [Step 3.6 - Generating Responses](#step-36)
+
+* [Part IV - Saving and Converting the Model](#part-iv---saving-the-fused-model-with-the-trained-adapters--compression-to-gguf-format)
+    * [Step 4.1 - Fusing Model](#step-41)
+    * [Step 4.2 - Testing Fused Model](#step-42)
+    * [Step 4.3 - MLX Inferencing](#step-43)
+    * [Step 4.4 - Huggingface Export](#step-44)
+    * [Step 4.5 - GGUF Conversion](#step-45)
+    * [Step 4.6 - Ollama Export](#step-46)
 
 ## Part I - Setting the Coding Environment
 ### Step 1.1:
@@ -443,6 +474,17 @@ Once we have created the Model File for our desired model, it is now time to exp
       
       %cd {output_directory} 
       !ollama create {Your_Desired_Model_Name} -f ModelFile
-## License
+## 📜 License
+This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details.
 
-## Contribution
+### Apache License 2.0 Summary:
+- ✅ Commercial use allowed
+- ✅ Modification allowed
+- ✅ Distribution allowed
+- ✅ Private use allowed
+- ℹ️ License and copyright notice required
+- ℹ️ State changes must be documented
+- ℹ️ Changes made must be open source
+
+## 🤝 Contribution
+Contributions are welcome! Please feel free to submit a Pull Request.
