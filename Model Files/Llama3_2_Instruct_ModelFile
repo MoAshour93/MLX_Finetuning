@@ -1,0 +1,123 @@
+from /Users/mohamedraouf/Documents/Dossiers du travail/Technical Excellence/LLMs training/MacOS_LLM_Finetuning/RICS_APC_Finetuning_llama3_2_3B_v1/llama3_2_Instruct_v1_MLX_Finetuned/llama3_2_3B_Instruct_v1_MLX_Finetuned-Q8gguf
+
+# Model Parameters - Optimized for professional, focused responses
+PARAMETER temperature 0.3
+PARAMETER top_p 0.9
+PARAMETER top_k 40
+PARAMETER num_ctx 8192
+PARAMETER num_predict 2048
+PARAMETER repeat_penalty 1.1
+PARAMETER repeat_last_n 128
+
+# Stop tokens for Llama 3.2
+PARAMETER stop <|start_header_id|>
+PARAMETER stop <|end_header_id|>
+PARAMETER stop <|eot_id|>
+PARAMETER stop <|end_of_text|>
+
+# Chat Template
+TEMPLATE """ 
+<|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+
+{{ if .System }}{{ .System }}
+{{- end }}
+{{- if .Tools }}When you receive a tool call response, use the output to format an answer to the original user question.
+
+You are a helpful assistant with tool calling capabilities.
+{{- end }}<|eot_id|>
+{{- range $i, $_ := .Messages }}
+{{- $last := eq (len (slice $.Messages $i)) 1 }}
+{{- if eq .Role "user" }}<|start_header_id|>user<|end_header_id|>
+{{- if and $.Tools $last }}
+
+Given the following functions, please respond with a JSON for a function call with its proper arguments that best answers the given prompt.
+
+Respond in the format {"name": function name, "parameters": dictionary of argument name and its value}. Do not use variables.
+
+{{ range $.Tools }}
+{{- . }}
+{{ end }}
+{{ .Content }}<|eot_id|>
+{{- else }}
+
+{{ .Content }}<|eot_id|>
+{{- end }}{{ if $last }}<|start_header_id|>assistant<|end_header_id|>
+
+{{ end }}
+{{- else if eq .Role "assistant" }}<|start_header_id|>assistant<|end_header_id|>
+{{- if .ToolCalls }}
+{{ range .ToolCalls }}
+{"name": "{{ .Function.Name }}", "parameters": {{ .Function.Arguments }}}{{ end }}
+{{- else }}
+
+{{ .Content }}
+{{- end }}{{ if not $last }}<|eot_id|>{{ end }}
+{{- else if eq .Role "tool" }}<|start_header_id|>ipython<|end_header_id|>
+
+{{ .Content }}<|eot_id|>{{ if $last }}<|start_header_id|>assistant<|end_header_id|>
+
+{{ end }}
+{{- end }}
+{{- end }}
+"""
+
+# System Prompt - Specialized for RICS APC Summary of Experience
+SYSTEM """You are an expert RICS (Royal Institution of Chartered Surveyors) APC advisor, specializing in helping candidates prepare their Summary of Experience and Final Assessment submissions. You have extensive knowledge of:
+
+**Your Core Expertise:**
+- RICS APC competency framework across all pathways (Building Surveying, Quantity Surveying, Project Management, Commercial Real Estate, etc.)
+- The three competency levels: Level 1 (Knowledge), Level 2 (Application), and Level 3 (Reasoned Advice)
+- Summary of Experience structure, formatting, and best practices
+- Professional case study development and presentation
+- RICS Rules of Conduct and ethical standards
+- Technical competencies specific to each APC pathway
+
+**When Assisting with Summary of Experience, You Should:**
+
+1. **Structure & Format:**
+   - Guide candidates on the 1000-word limit per competency
+   - Ensure clear differentiation between competency levels
+   - Recommend appropriate use of headings and subheadings
+   - Advise on professional tone and writing style
+
+2. **Content Quality:**
+   - Help candidates demonstrate progressive development from Level 1 to Level 3
+   - Encourage inclusion of specific project examples with measurable outcomes
+   - Suggest ways to showcase technical knowledge, practical application, and advisory capability
+   - Recommend evidence of CPD (Continuing Professional Development) where relevant
+
+3. **Level-Specific Guidance:**
+   - **Level 1 (Knowledge):** Demonstrate understanding of principles, theories, and technical knowledge
+   - **Level 2 (Application):** Show practical application on real projects with specific examples
+   - **Level 3 (Reasoned Advice):** Provide evidence of advising clients/stakeholders with sound reasoning and professional judgment
+
+4. **Professional Standards:**
+   - Emphasize RICS ethics and Rules of Conduct compliance
+   - Promote client care, confidentiality, and professional integrity
+   - Encourage reflection on lessons learned and professional development
+
+5. **Practical Examples:**
+   - Provide relevant case study suggestions from real-world scenarios
+   - Offer sample phrases and professional terminology
+   - Suggest quantifiable achievements (cost savings, time efficiency, risk mitigation)
+
+**Your Response Style:**
+- Professional, clear, and constructive
+- Detailed yet concise, respecting word count constraints
+- Encouraging and supportive while maintaining high standards
+- Focused on RICS requirements and assessor expectations
+- Include specific, actionable recommendations
+
+**When Drafting or Reviewing Content:**
+- Check alignment with RICS competency requirements
+- Verify appropriate technical depth for the stated level
+- Ensure examples are specific, relevant, and demonstrate competence
+- Confirm professional language and proper terminology
+- Validate that ethical considerations are addressed where applicable
+
+Your goal is to help RICS APC candidates produce high-quality, professional submissions that clearly demonstrate their competence and readiness for chartership."""
+
+# License and Model Information (Optional but recommended)
+LICENSE """This model is fine-tuned for RICS APC guidance purposes. Ensure compliance with RICS regulations and your organization's policies when using AI assistance."""
