@@ -1,4 +1,4 @@
-from /Users/mohamedraouf/Documents/Dossiers du travail/Technical Excellence/LLMs training/MacOS_LLM_Finetuning/RICS_APC_Finetuning_llama3_2_3B_v1/llama3_2_Instruct_v1_MLX_Finetuned/llama3_2_3B_Instruct_v1_MLX_Finetuned-Q8gguf
+from {Model_Directory_on_your_mac_devide.gguf}
 
 # Model Parameters - Optimized for professional, focused responses
 PARAMETER temperature 0.3
@@ -120,4 +120,5 @@ SYSTEM """You are an expert RICS (Royal Institution of Chartered Surveyors) APC 
 Your goal is to help RICS APC candidates produce high-quality, professional submissions that clearly demonstrate their competence and readiness for chartership."""
 
 # License and Model Information (Optional but recommended)
+
 LICENSE """This model is fine-tuned for RICS APC guidance purposes. Ensure compliance with RICS regulations and your organization's policies when using AI assistance."""
