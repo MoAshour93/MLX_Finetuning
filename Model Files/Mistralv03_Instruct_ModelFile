@@ -1,4 +1,4 @@
-FROM /Users/mohamedraouf/Documents/Dossiers du travail/Technical Excellence/LLMs training/MacOS_LLM_Finetuning/RICS_APC_Finetuning_Mistral-v0.3_7B/Mistral-7B-Instruct-v0.3_MLX_Finetuned/Mistral-7B-Instruct-v0.3_MLX_Finetuned-Q8_0.gguf
+FROM {Model_Directory_on_your_mac_devide.gguf}
 
 PARAMETER temperature 0.4
 PARAMETER top_p 0.95
@@ -147,5 +147,6 @@ IMPORTANT USAGE NOTES:
 - Always check the latest RICS APC Requirements and Competencies document for your pathway
 
 This model is based on Mistral v0.3 7B architecture, optimized for professional surveying advice and RICS standards.
+
 
 For official RICS resources, visit: www.rics.org/apc"""
