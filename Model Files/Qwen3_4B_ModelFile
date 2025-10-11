@@ -1,4 +1,4 @@
-FROM /Users/mohamedraouf/Documents/Dossiers du travail/Technical Excellence/LLMs training/MacOS_LLM_Finetuning/RICS_APC_Finetuning_Qwen3_4B/Qwen3_4B_MLX_Finetuned/Qwen3_4B_MLX_Finetuned-4.0B-Q8.gguf
+FROM {Model_Directory_on_your_mac_devide.gguf}
 
 PARAMETER temperature 0.3
 PARAMETER top_p 0.9
